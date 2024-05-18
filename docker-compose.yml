@@ -1,0 +1,54 @@
+services:
+  cache:
+    image: redis:alpine
+    restart: always
+
+  db:
+    image: postgres:latest
+    ports:
+      - $POSTGRES_PORT:$POSTGRES_PORT
+    command: -p $POSTGRES_PORT
+    restart: always
+    environment:
+      - POSTGRES_DB=$POSTGRES_DB
+      - POSTGRES_USER=$POSTGRES_USER
+      - POSTGRES_PASSWORD=$POSTGRES_PASSWORD
+    env_file:
+      - .env
+    volumes:
+      - ./data/postgresql:/var/lib/postgresql/data
+
+  search:
+    image: getmeili/meilisearch:v1.1
+    restart: always
+    env_file:
+      - .env
+    volumes:
+      - ./data/meilisearch:/meili_data
+
+  app:
+    build: .
+    volumes:
+      - "./src:/usr/app/src"
+      - "./prisma:/usr/app/prisma"
+      - "./test:/usr/app/test"
+    ports:
+      - 3000:3000
+    depends_on:
+      - db
+      - cache
+      - search
+    env_file:
+      - .env
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 4G
+        reservations:
+          cpus: '0.25'
+          memory: 2G
+
+volumes:
+  data:
+    driver: local
