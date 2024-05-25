@@ -14,6 +14,7 @@ async function bootstrap() {
   app.setGlobalPrefix('api')
 
   await app.listen(process.env.APP_PORT || 3000, async () =>
+    // eslint-disable-next-line no-console
     console.info('Application running at ', await app.getUrl()),
   )
 }
