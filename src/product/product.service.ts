@@ -1,10 +1,11 @@
 import { Injectable } from '@nestjs/common'
+import { ProductStatus } from '@prisma/client'
+import { ErrorCustomException } from 'src/utils/exception/error.filter'
+import { QueryDto } from 'src/utils/query.dto'
+import PrismaService from '../prisma/prisma.service'
+import { paginator } from '../utils/paginator'
 import { CreateProductDto } from './dto/create-product.dto'
 import { UpdateProductDto } from './dto/update-product.dto'
-import PrismaService from '../prisma/prisma.service'
-import { ErrorCustomException } from 'src/utils/exception/error.filter'
-import { paginator } from '../utils/paginator'
-import { QueryDto } from 'src/utils/query.dto'
 
 @Injectable()
 export class ProductService {
@@ -13,7 +14,10 @@ export class ProductService {
   create(createProductDto: CreateProductDto) {
     try {
       return this.prismaService.product.create({
-        data: createProductDto,
+        data: {
+          ...createProductDto,
+          status: createProductDto.status ?? ProductStatus.INACTIVE,
+        },
       })
     } catch (error) {
       console.error(error)
@@ -21,25 +25,22 @@ export class ProductService {
     }
   }
 
-  findAll(request: QueryDto) {
+  findAll({ page, items_per_page }: QueryDto) {
     try {
-      const paginate = paginator({
-        items_per_page: request.items_per_page,
-        page: request.page,
-      })
+      const paginate = paginator({ items_per_page, page })
       return paginate(
         this.prismaService.product,
         {
           where: {
+            status: ProductStatus.ACTIVE,
             deleted_at: null,
           },
           include: {
             Shop: true,
+            Images: true,
           },
         },
-        {
-          page: request.page,
-        },
+        { page },
       )
     } catch (error) {
       console.error(error)
@@ -52,9 +53,12 @@ export class ProductService {
       return this.prismaService.product.findUnique({
         where: {
           id,
+          status: ProductStatus.ACTIVE,
+          deleted_at: null,
         },
         include: {
           Shop: true,
+          Images: true,
         },
       })
     } catch (error) {
@@ -69,7 +73,10 @@ export class ProductService {
         where: {
           id,
         },
-        data: updateProductDto,
+        data: {
+          ...updateProductDto,
+          status: updateProductDto.status ?? ProductStatus.INACTIVE,
+        },
       })
     } catch (error) {
       console.error(error)

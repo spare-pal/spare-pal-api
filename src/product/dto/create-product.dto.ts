@@ -10,32 +10,25 @@ import {
 
 export class CreateProductDto {
   @ApiProperty({
-    example: 'prod1',
+    example: 'Tyre',
   })
   @IsString()
   @IsNotEmpty()
   name: string
 
   @ApiProperty({
-    example: 'desc1',
+    example: 'Michelin Tyre for all vehicles.',
   })
   @IsString()
   @IsNotEmpty()
   description: string
 
   @ApiProperty({
-    example: 100,
+    example: 1000,
   })
   @IsNumber()
   @IsNotEmpty()
   price: number
-
-  @ApiProperty({
-    example: 'https://www.img.com/img.jpg',
-  })
-  @IsString()
-  @IsNotEmpty()
-  image: string
 
   @ApiProperty({
     example: 'ACTIVE',

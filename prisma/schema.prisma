@@ -86,10 +86,10 @@ model Product {
   name        String
   description String
   price       Float
-  image       String
   status      ProductStatus @default(ACTIVE)
   shop_id     Int
 
+  Images     Image[]
   OrderItems OrderItem[]
   Shop       Shop        @relation(fields: [shop_id], references: [id])
   Categories Category[]  @relation("CategoryToProduct")
@@ -180,4 +180,19 @@ model Banner {
   deleted_at DateTime?
 
   @@map("banners")
+}
+
+model Image {
+  id         Int    @id @default(autoincrement())
+  url        String
+  alt        String
+  product_id Int
+
+  Product Product @relation(fields: [product_id], references: [id])
+
+  created_at DateTime  @default(now())
+  updated_at DateTime  @default(now()) @updatedAt
+  deleted_at DateTime?
+
+  @@map("images")
 }

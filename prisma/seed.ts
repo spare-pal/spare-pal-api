@@ -1,5 +1,5 @@
-import { PrismaClient, ShopStatus, ProductStatus } from '@prisma/client'
 import { faker } from '@faker-js/faker'
+import { PrismaClient, ProductStatus, ShopStatus } from '@prisma/client'
 
 const prisma = new PrismaClient()
 
@@ -12,11 +12,18 @@ const fakerShop = () => ({
   status: ShopStatus.ACTIVE,
 })
 
+const fakerImage = (productId: number) => ({
+  product_id: productId,
+  url: faker.image.urlLoremFlickr({
+    category: 'transport',
+  }),
+  alt: faker.lorem.words(),
+})
+
 const fakerProduct = (shopId: number) => ({
   name: faker.commerce.productName(),
   description: faker.commerce.productDescription(),
   price: Number(faker.commerce.price()),
-  image: faker.image.urlLoremFlickr(),
   status: ProductStatus.ACTIVE,
   shop_id: shopId,
 })
@@ -30,21 +37,36 @@ const fakerBanner = (shopId: number) => ({
 })
 
 async function main() {
-  console.log('Seeding data...')
+  console.log('Seeding data...\n')
   console.log('Seeding shops...')
   const shops = await Promise.all(
-    Array.from({ length: 20 }).map(() =>
+    Array.from({ length: faker.number.int({ min: 18, max: 25 }) }).map(() =>
       prisma.shop.create({ data: fakerShop() }),
     ),
   )
 
   console.log('Seeding products...')
+  const products = (
+    await Promise.all(
+      shops.map((shop) =>
+        Promise.all(
+          Array.from({ length: 30 }).map(() =>
+            prisma.product.create({
+              data: fakerProduct(shop.id),
+            }),
+          ),
+        ),
+      ),
+    )
+  ).reduce((acc, val) => acc.concat(val), [])
+
+  console.log('Seeding images...')
   await Promise.all(
-    shops.map((shop) =>
+    products.map((product) =>
       Promise.all(
-        Array.from({ length: 30 }).map(() =>
-          prisma.product.create({
-            data: fakerProduct(shop.id),
+        Array.from({ length: faker.number.int({ min: 1, max: 5 }) }).map(() =>
+          prisma.image.create({
+            data: fakerImage(product.id),
           }),
         ),
       ),
