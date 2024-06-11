@@ -10,6 +10,9 @@ const fakerShop = () => ({
   latitude: Number(faker.location.latitude()),
   longitude: Number(faker.location.longitude()),
   status: ShopStatus.ACTIVE,
+  splash_image: faker.image.urlLoremFlickr({
+    category: 'abstract',
+  }),
 })
 
 const fakerImage = (productId: number) => ({
@@ -29,7 +32,9 @@ const fakerProduct = (shopId: number) => ({
 })
 
 const fakerBanner = (shopId: number) => ({
-  image: faker.image.urlLoremFlickr(),
+  image: faker.image.urlLoremFlickr({
+    category: 'abstract',
+  }),
   title: faker.lorem.words(),
   description: faker.lorem.paragraph(),
   status: true,
