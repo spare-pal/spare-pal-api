@@ -1,23 +1,13 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Post,
-  UseFilters,
-  UseGuards,
-} from '@nestjs/common'
+import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common'
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger'
 import { User } from 'src/utils/decorators/user.decorator'
-import { ErrorExceptionFilter } from '../utils/exception/error.filter'
 import { AuthService } from './auth.service'
 import { CreateUserDto } from './dto/create-user.dto'
 import { SignInDto } from './dto/sign-in.dto'
 import { CustomerGuard } from './guards/customer.guard'
 
-@ApiBearerAuth()
 @ApiTags('Auth')
 @Controller('auth')
-@UseFilters(new ErrorExceptionFilter())
 export class AuthController {
   constructor(private authService: AuthService) {}
 
@@ -31,6 +21,7 @@ export class AuthController {
     return this.authService.register(request)
   }
 
+  @ApiBearerAuth()
   @UseGuards(CustomerGuard)
   @Get('profile')
   getProfile(@User('id') id: number) {
