@@ -7,19 +7,177 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Role {
+  ADMIN
+  VENDOR
+  CUSTOMER
+}
+
+enum OrderStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  CANCELLED
+}
+
+enum ProductStatus {
+  ACTIVE
+  INACTIVE
+}
+
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+}
+
+enum ShopStatus {
+  ACTIVE
+  INACTIVE
+}
+
 model User {
-  id           Int       @id @default(autoincrement())
+  id           Int        @id @default(autoincrement())
   first_name   String
-  last_name    String
-  username     String    @unique
+  last_name    String?
+  username     String     @unique
   email        String?
-  phone_number String
+  phone_number String     @unique
   password     String
-  status       Boolean   @default(true)
+  status       UserStatus @default(ACTIVE)
   last_login   DateTime?
-  created_at   DateTime  @default(now())
-  updated_at   DateTime  @default(now()) @updatedAt
-  deleted_at   DateTime?
+  user_type    Role       @default(CUSTOMER)
+
+  OrderItems OrderItem[]
+  Orders     Order[]
+  Favorites  Favorite[]
+
+  created_at DateTime  @default(now())
+  updated_at DateTime  @default(now()) @updatedAt
+  deleted_at DateTime?
+  Shop       Shop[]
 
   @@map("users")
+}
+
+model Shop {
+  id          Int        @id @default(autoincrement())
+  name        String
+  description String?
+  address     String?
+  latitude    Float?
+  longitude   Float?
+  user_id     Int?
+  status      ShopStatus @default(ACTIVE)
+
+  User       User?      @relation(fields: [user_id], references: [id])
+  Products   Product[]
+  Categories Category[] @relation("CategoryToShop")
+  Banners    Banner[]
+
+  created_at DateTime  @default(now())
+  updated_at DateTime  @default(now()) @updatedAt
+  deleted_at DateTime?
+
+  @@map("shops")
+}
+
+model Product {
+  id          Int           @id @default(autoincrement())
+  name        String
+  description String
+  price       Float
+  image       String
+  status      ProductStatus @default(ACTIVE)
+  shop_id     Int
+
+  OrderItems OrderItem[]
+  Shop       Shop        @relation(fields: [shop_id], references: [id])
+  Categories Category[]  @relation("CategoryToProduct")
+  Favorites  Favorite[]
+
+  created_at DateTime  @default(now())
+  updated_at DateTime  @default(now()) @updatedAt
+  deleted_at DateTime?
+
+  @@map("products")
+}
+
+model OrderItem {
+  id         Int  @id @default(autoincrement())
+  user_id    Int
+  product_id Int
+  quantity   Int
+  order_id   Int?
+
+  User    User    @relation(fields: [user_id], references: [id])
+  Order   Order?  @relation(fields: [order_id], references: [id])
+  Product Product @relation(fields: [product_id], references: [id])
+
+  created_at DateTime  @default(now())
+  updated_at DateTime  @default(now()) @updatedAt
+  deleted_at DateTime?
+
+  @@map("order_items")
+}
+
+model Order {
+  id         Int         @id @default(autoincrement())
+  user_id    Int
+  total      Float
+  status     OrderStatus @default(PENDING)
+  created_at DateTime    @default(now())
+  updated_at DateTime    @default(now()) @updatedAt
+  deleted_at DateTime?
+
+  User       User        @relation(fields: [user_id], references: [id])
+  OrderItems OrderItem[]
+
+  @@map("orders")
+}
+
+model Category {
+  id          Int    @id @default(autoincrement())
+  name        String
+  description String
+
+  Products Product[] @relation("CategoryToProduct")
+  Shops    Shop[]    @relation("CategoryToShop")
+
+  created_at DateTime  @default(now())
+  updated_at DateTime  @default(now()) @updatedAt
+  deleted_at DateTime?
+
+  @@map("categories")
+}
+
+model Favorite {
+  id         Int @id @default(autoincrement())
+  user_id    Int
+  product_id Int
+
+  User    User    @relation(fields: [user_id], references: [id])
+  Product Product @relation(fields: [product_id], references: [id])
+
+  created_at DateTime  @default(now())
+  updated_at DateTime  @default(now()) @updatedAt
+  deleted_at DateTime?
+
+  @@map("favorites")
+}
+
+model Banner {
+  id          Int     @id @default(autoincrement())
+  image       String
+  title       String
+  description String
+  status      Boolean @default(true)
+  shop_id     Int
+
+  Shop Shop @relation(fields: [shop_id], references: [id])
+
+  created_at DateTime  @default(now())
+  updated_at DateTime  @default(now()) @updatedAt
+  deleted_at DateTime?
+
+  @@map("banners")
 }

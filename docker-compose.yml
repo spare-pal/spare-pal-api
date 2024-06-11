@@ -40,14 +40,6 @@ services:
       - search
     env_file:
       - .env
-    deploy:
-      resources:
-        limits:
-          cpus: '0.5'
-          memory: 4G
-        reservations:
-          cpus: '0.25'
-          memory: 2G
 
 volumes:
   data:

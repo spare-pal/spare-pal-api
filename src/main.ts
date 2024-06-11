@@ -1,5 +1,5 @@
-import { NestFactory } from '@nestjs/core'
 import { ValidationPipe } from '@nestjs/common'
+import { NestFactory } from '@nestjs/core'
 import AppModule from './app.module'
 
 async function bootstrap() {
@@ -8,13 +8,11 @@ async function bootstrap() {
     new ValidationPipe({
       whitelist: true,
       transform: true,
-      forbidNonWhitelisted: true,
     }),
   )
   app.setGlobalPrefix('api')
 
   await app.listen(process.env.APP_PORT || 3000, async () =>
-    // eslint-disable-next-line no-console
     console.info('Application running at ', await app.getUrl()),
   )
 }
