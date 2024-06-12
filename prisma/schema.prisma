@@ -16,8 +16,8 @@ enum Role {
 enum OrderStatus {
   PENDING
   PROCESSING
-  COMPLETED
   CANCELLED
+  DELIVERED
 }
 
 enum PaymentStatus {
@@ -140,10 +140,10 @@ model Order {
   payment_status PaymentStatus @default(PENDING)
   note           String?
 
-  placed    DateTime
-  completed DateTime?
-  cancelled DateTime?
-  delivered DateTime?
+  placed     DateTime
+  processing DateTime?
+  cancelled  DateTime?
+  delivered  DateTime?
 
   User       User        @relation(fields: [user_id], references: [id])
   OrderItems OrderItem[]

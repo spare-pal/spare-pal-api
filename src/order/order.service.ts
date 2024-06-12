@@ -152,9 +152,13 @@ export class OrderService {
     }
   }
 
-  update(id: number, updateOrderDto: UpdateOrderDto) {
+  async update(id: number, updateOrderDto: UpdateOrderDto) {
     try {
-      return this.prismaService.order.update({
+      if (updateOrderDto.order_status) {
+        updateOrderDto[String(updateOrderDto.order_status).toLowerCase()] =
+          new Date()
+      }
+      return await this.prismaService.order.update({
         where: {
           id,
         },
