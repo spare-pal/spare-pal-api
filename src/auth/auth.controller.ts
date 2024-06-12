@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common'
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger'
-import { User } from 'src/utils/decorators/user.decorator'
+import { User } from '../utils/decorators/user.decorator'
 import { AuthService } from './auth.service'
 import { CreateUserDto } from './dto/create-user.dto'
 import { SignInDto } from './dto/sign-in.dto'

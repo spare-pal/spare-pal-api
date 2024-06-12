@@ -10,13 +10,14 @@ import {
   UseGuards,
 } from '@nestjs/common'
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger'
-import { AdminGuard } from 'src/auth/guards/admin.guard'
-import { AuthGuard } from 'src/auth/guards/auth.guard'
+import { User as PrismaUser } from '@prisma/client'
+import { AdminGuard } from '../auth/guards/admin.guard'
+import { AuthGuard } from '../auth/guards/auth.guard'
+import { User } from '../utils/decorators/user.decorator'
+import { QueryDto } from '../utils/query.dto'
 import { CreateOrderDto } from './dto/create-order.dto'
 import { UpdateOrderDto } from './dto/update-order.dto'
 import { OrderService } from './order.service'
-import { QueryDto } from 'src/utils/query.dto'
-import { User } from 'src/utils/decorators/user.decorator'
 
 @ApiTags('Order')
 @ApiBearerAuth()
@@ -32,18 +33,13 @@ export class OrderController {
   }
 
   @Get()
-  findAll(@Query() query: QueryDto) {
-    return this.orderService.findAll(query)
-  }
-
-  @Get('mine')
-  findUserOrders(@User('id') user_id: number, @Query() query: QueryDto) {
-    return this.orderService.findUserOrders(user_id, query)
+  findAll(@User() user: PrismaUser, @Query() query: QueryDto) {
+    return this.orderService.findAll(user, query)
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.orderService.findOne(+id)
+  findOne(@User('id') user_id: number, @Param('id') id: string) {
+    return this.orderService.findOne(user_id, +id)
   }
 
   @ApiBearerAuth()

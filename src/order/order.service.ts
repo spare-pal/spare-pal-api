@@ -1,11 +1,11 @@
 import { HttpStatus, Injectable } from '@nestjs/common'
-import { CreateOrderDto } from './dto/create-order.dto'
-import { UpdateOrderDto } from './dto/update-order.dto'
+import { ProductStatus, User } from '@prisma/client'
 import PrismaService from '../prisma/prisma.service'
 import { ErrorCustomException } from '../utils/exception/error.filter'
-import { QueryDto } from 'src/utils/query.dto'
-import { paginator } from 'src/utils/paginator'
-import { ProductStatus } from '@prisma/client'
+import { paginator } from '../utils/paginator'
+import { QueryDto } from '../utils/query.dto'
+import { CreateOrderDto } from './dto/create-order.dto'
+import { UpdateOrderDto } from './dto/update-order.dto'
 
 @Injectable()
 export class OrderService {
@@ -93,15 +93,19 @@ export class OrderService {
     }
   }
 
-  async findAll({ items_per_page, page }: QueryDto) {
+  async findAll(user: User, { items_per_page, page }: QueryDto) {
     try {
+      const where = {
+        deleted_at: null,
+      }
+      if (user.user_type == 'CUSTOMER') {
+        where['user_id'] = user.id
+      }
       const paginate = paginator({ items_per_page, page })
       return await paginate(
         this.prismaService.order,
         {
-          where: {
-            deleted_at: null,
-          },
+          where,
           include: {
             User: true,
             OrderItems: true,
@@ -115,34 +119,12 @@ export class OrderService {
     }
   }
 
-  async findUserOrders(user_id: number, { items_per_page, page }: QueryDto) {
-    try {
-      const paginate = paginator({ items_per_page, page })
-      return await paginate(
-        this.prismaService.order,
-        {
-          where: {
-            user_id,
-            deleted_at: null,
-          },
-          include: {
-            User: true,
-            OrderItems: true,
-          },
-        },
-        { page },
-      )
-    } catch (error) {
-      console.error(error)
-      ErrorCustomException.handle(error, 'order')
-    }
-  }
-
-  findOne(id: number) {
+  findOne(user_id: number, id: number) {
     try {
       return this.prismaService.order.findUnique({
         where: {
           id,
+          user_id,
           deleted_at: null,
         },
       })

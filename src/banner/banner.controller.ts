@@ -9,7 +9,7 @@ import {
   UseGuards,
 } from '@nestjs/common'
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger'
-import { AdminGuard } from 'src/auth/guards/admin.guard'
+import { AdminGuard } from '../auth/guards/admin.guard'
 import { BannerService } from './banner.service'
 import { CreateBannerDto } from './dto/create-banner.dto'
 import { UpdateBannerDto } from './dto/update-banner.dto'

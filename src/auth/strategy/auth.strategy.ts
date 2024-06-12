@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common'
+import { ConfigService } from '@nestjs/config'
 import { PassportStrategy } from '@nestjs/passport'
 import { ExtractJwt, Strategy } from 'passport-jwt'
-import { ConfigService } from '@nestjs/config'
-import PrismaService from 'src/prisma/prisma.service'
-import { ErrorCustomException } from 'src/utils/exception/error.filter'
+import PrismaService from '../../prisma/prisma.service'
+import { ErrorCustomException } from '../../utils/exception/error.filter'
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {

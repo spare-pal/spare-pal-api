@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common'
 import { ProductStatus } from '@prisma/client'
-import { ErrorCustomException } from 'src/utils/exception/error.filter'
-import { QueryDto } from 'src/utils/query.dto'
 import PrismaService from '../prisma/prisma.service'
+import { ErrorCustomException } from '../utils/exception/error.filter'
 import { paginator } from '../utils/paginator'
+import { QueryDto } from '../utils/query.dto'
 import { CreateProductDto } from './dto/create-product.dto'
 import { UpdateProductDto } from './dto/update-product.dto'
 

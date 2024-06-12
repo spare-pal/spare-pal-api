@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common'
-import PrismaService from 'src/prisma/prisma.service'
-import { ErrorCustomException } from 'src/utils/exception/error.filter'
+import PrismaService from '../prisma/prisma.service'
+import { ErrorCustomException } from '../utils/exception/error.filter'
 import { CreateBannerDto } from './dto/create-banner.dto'
 import { UpdateBannerDto } from './dto/update-banner.dto'
 

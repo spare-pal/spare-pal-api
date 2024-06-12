@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common'
 import { ShopStatus } from '@prisma/client'
-import PrismaService from 'src/prisma/prisma.service'
-import { ErrorCustomException } from 'src/utils/exception/error.filter'
-import { paginator } from 'src/utils/paginator'
-import { QueryDto } from 'src/utils/query.dto'
+import PrismaService from '../prisma/prisma.service'
+import { ErrorCustomException } from '../utils/exception/error.filter'
+import { paginator } from '../utils/paginator'
+import { QueryDto } from '../utils/query.dto'
 import { CreateShopDto } from './dto/create-shop.dto'
 import { UpdateShopDto } from './dto/update-shop.dto'
 
