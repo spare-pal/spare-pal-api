@@ -51,45 +51,34 @@ async function main() {
   )
 
   console.log('Seeding products...')
-  const products = (
-    await Promise.all(
-      shops.map((shop) =>
-        Promise.all(
-          Array.from({ length: 30 }).map(() =>
-            prisma.product.create({
-              data: fakerProduct(shop.id),
-            }),
-          ),
-        ),
-      ),
-    )
-  ).reduce((acc, val) => acc.concat(val), [])
+  const products = []
+  for (const shop of shops) {
+    for (const _ of Array.from({
+      length: faker.number.int({ min: 20, max: 30 }),
+    })) {
+      const prod = await prisma.product.create({
+        data: fakerProduct(shop.id),
+      })
+      products.push(prod)
+    }
+  }
 
   console.log('Seeding images...')
-  await Promise.all(
-    products.map((product) =>
-      Promise.all(
-        Array.from({ length: faker.number.int({ min: 1, max: 5 }) }).map(() =>
-          prisma.image.create({
-            data: fakerImage(product.id),
-          }),
-        ),
-      ),
-    ),
-  )
+  for (const product of products) {
+    const count = faker.number.int({ min: 1, max: 5 })
+    for (let i = 0; i < count; i++) {
+      await prisma.image.create({
+        data: fakerImage(product.id),
+      })
+    }
+  }
 
   console.log('Seeding banners...')
-  await Promise.all(
-    shops.map((shop) =>
-      Promise.all(
-        Array.from({ length: 1 }).map(() =>
-          prisma.banner.create({
-            data: fakerBanner(shop.id),
-          }),
-        ),
-      ),
-    ),
-  )
+  for (const shop of shops) {
+    await prisma.banner.create({
+      data: fakerBanner(shop.id),
+    })
+  }
 }
 
 main()
@@ -99,3 +88,54 @@ main()
   .finally(async () => {
     await prisma.$disconnect()
   })
+
+// async function main() {
+//   console.log('Seeding data...\n')
+//   console.log('Seeding shops...')
+//   const shops = await Promise.all(
+//     Array.from({ length: faker.number.int({ min: 18, max: 25 }) }).map(() =>
+//       prisma.shop.create({ data: fakerShop() }),
+//     ),
+//   )
+
+//   console.log('Seeding products...')
+//   const products = (
+//     await Promise.all(
+//       shops.map((shop) =>
+//         Promise.all(
+//           Array.from({ length: 30 }).map(() =>
+//             prisma.product.create({
+//               data: fakerProduct(shop.id),
+//             }),
+//           ),
+//         ),
+//       ),
+//     )
+//   ).reduce((acc, val) => acc.concat(val), [])
+
+//   console.log('Seeding images...')
+//   await Promise.all(
+//     products.map((product) =>
+//       Promise.all(
+//         Array.from({ length: faker.number.int({ min: 1, max: 5 }) }).map(() =>
+//           prisma.image.create({
+//             data: fakerImage(product.id),
+//           }),
+//         ),
+//       ),
+//     ),
+//   )
+
+//   console.log('Seeding banners...')
+//   await Promise.all(
+//     shops.map((shop) =>
+//       Promise.all(
+//         Array.from({ length: 1 }).map(() =>
+//           prisma.banner.create({
+//             data: fakerBanner(shop.id),
+//           }),
+//         ),
+//       ),
+//     ),
+//   )
+// }
