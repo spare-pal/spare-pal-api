@@ -37,9 +37,9 @@ export class BannerService {
     }
   }
 
-  findOne(id: number) {
+  async findOne(id: number) {
     try {
-      return this.prismaService.banner.findUnique({
+      return await this.prismaService.banner.findUniqueOrThrow({
         where: {
           id,
           deleted_at: null,

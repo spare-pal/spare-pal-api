@@ -50,7 +50,7 @@ export class ProductService {
 
   findOne(id: number) {
     try {
-      return this.prismaService.product.findUnique({
+      return this.prismaService.product.findUniqueOrThrow({
         where: {
           id,
           status: ProductStatus.ACTIVE,

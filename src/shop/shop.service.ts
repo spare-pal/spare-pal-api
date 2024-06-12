@@ -46,7 +46,7 @@ export class ShopService {
 
   findOne(id: number) {
     try {
-      return this.prismaService.shop.findUnique({
+      return this.prismaService.shop.findUniqueOrThrow({
         where: {
           id,
           status: ShopStatus.ACTIVE,

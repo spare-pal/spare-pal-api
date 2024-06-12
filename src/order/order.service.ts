@@ -119,9 +119,9 @@ export class OrderService {
     }
   }
 
-  findOne(user_id: number, id: number) {
+  async findOne(user_id: number, id: number) {
     try {
-      return this.prismaService.order.findUnique({
+      return await this.prismaService.order.findUniqueOrThrow({
         where: {
           id,
           user_id,

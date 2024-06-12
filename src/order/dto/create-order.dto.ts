@@ -33,6 +33,10 @@ export class CreateOrderDto {
         product_id: 1,
         quantity: 1,
       },
+      {
+        product_id: 5,
+        quantity: 2,
+      },
     ],
   })
   @ValidateNested({ each: true })
