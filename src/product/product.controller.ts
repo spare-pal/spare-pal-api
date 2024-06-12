@@ -29,8 +29,8 @@ export class ProductController {
   }
 
   @Get()
-  findAll(@Query() request: QueryDto) {
-    return this.productService.findAll(request)
+  findAll(@Query() query: QueryDto) {
+    return this.productService.findAll(query)
   }
 
   @Get(':id')

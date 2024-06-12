@@ -29,8 +29,8 @@ export class ShopController {
   }
 
   @Get()
-  findAll(@Query() request: QueryDto) {
-    return this.shopService.findAll(request)
+  findAll(@Query() query: QueryDto) {
+    return this.shopService.findAll(query)
   }
 
   @Get(':id')

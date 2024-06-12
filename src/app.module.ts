@@ -5,6 +5,7 @@ import { BannerModule } from './banner/banner.module'
 import PrismaModule from './prisma/prisma.module'
 import { ProductModule } from './product/product.module'
 import { ShopModule } from './shop/shop.module'
+import { OrderModule } from './order/order.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { ShopModule } from './shop/shop.module'
     ShopModule,
     BannerModule,
     ProductModule,
+    OrderModule,
   ],
 })
 export default class AppModule {}

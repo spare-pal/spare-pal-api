@@ -4,8 +4,8 @@ import { JwtService } from '@nestjs/jwt'
 import * as argon from 'argon2'
 import PrismaService from 'src/prisma/prisma.service'
 import { ErrorCustomException } from 'src/utils/exception/error.filter'
-import { SignInDto } from './dto/sign-in.dto'
 import { CreateUserDto } from './dto/create-user.dto'
+import { SignInDto } from './dto/sign-in.dto'
 
 @Injectable()
 export class AuthService {
@@ -15,13 +15,13 @@ export class AuthService {
     private prismaService: PrismaService,
   ) {}
 
-  async register(request: CreateUserDto) {
+  async register(createUserDto: CreateUserDto) {
     try {
       const user = await this.prismaService.user.create({
         data: {
-          ...request,
-          username: request.phone_number,
-          password: await argon.hash(request.password),
+          ...createUserDto,
+          username: createUserDto.phone_number,
+          password: await argon.hash(createUserDto.password),
         },
       })
 
@@ -32,11 +32,11 @@ export class AuthService {
     }
   }
 
-  async signIn(request: SignInDto) {
+  async signIn(signInDto: SignInDto) {
     let user = null
     try {
       user = await this.prismaService.user.findFirstOrThrow({
-        where: { phone_number: request.phone_number },
+        where: { phone_number: signInDto.phone_number },
       })
     } catch (error) {
       console.error(error)
@@ -45,7 +45,10 @@ export class AuthService {
         HttpStatus.UNAUTHORIZED,
       )
     }
-    const passwordMatches = await argon.verify(user.password, request.password)
+    const passwordMatches = await argon.verify(
+      user.password,
+      signInDto.password,
+    )
     if (!passwordMatches) {
       throw new ErrorCustomException(
         'INVALID_CREDENTIALS',

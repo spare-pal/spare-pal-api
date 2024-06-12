@@ -120,7 +120,7 @@ model OrderItem {
   order_id   Int
 
   User    User    @relation(fields: [user_id], references: [id])
-  Order   Order   @relation(fields: [order_id], references: [id])
+  Order   Order   @relation(fields: [order_id], references: [id], onDelete: Cascade)
   Product Product @relation(fields: [product_id], references: [id])
 
   created_at DateTime  @default(now())
@@ -196,7 +196,7 @@ model Banner {
   status      Boolean @default(true)
   shop_id     Int
 
-  Shop Shop @relation(fields: [shop_id], references: [id])
+  Shop Shop @relation(fields: [shop_id], references: [id], onDelete: Cascade)
 
   created_at DateTime  @default(now())
   updated_at DateTime  @default(now()) @updatedAt
@@ -211,7 +211,7 @@ model Image {
   alt        String
   product_id Int
 
-  Product Product @relation(fields: [product_id], references: [id])
+  Product Product @relation(fields: [product_id], references: [id], onDelete: Cascade)
 
   created_at DateTime  @default(now())
   updated_at DateTime  @default(now()) @updatedAt
