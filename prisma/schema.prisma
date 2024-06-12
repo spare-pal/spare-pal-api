@@ -20,6 +20,12 @@ enum OrderStatus {
   CANCELLED
 }
 
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+}
+
 enum ProductStatus {
   ACTIVE
   INACTIVE
@@ -86,7 +92,7 @@ model Shop {
 model Product {
   id          Int           @id @default(autoincrement())
   name        String
-  description String
+  description String?
   price       Float
   status      ProductStatus @default(ACTIVE)
   shop_id     Int
@@ -105,14 +111,16 @@ model Product {
 }
 
 model OrderItem {
-  id         Int  @id @default(autoincrement())
+  id         Int   @id @default(autoincrement())
   user_id    Int
   product_id Int
   quantity   Int
-  order_id   Int?
+  unit_price Float
+  total      Float
+  order_id   Int
 
   User    User    @relation(fields: [user_id], references: [id])
-  Order   Order?  @relation(fields: [order_id], references: [id])
+  Order   Order   @relation(fields: [order_id], references: [id])
   Product Product @relation(fields: [product_id], references: [id])
 
   created_at DateTime  @default(now())
@@ -123,27 +131,40 @@ model OrderItem {
 }
 
 model Order {
-  id         Int         @id @default(autoincrement())
-  user_id    Int
-  total      Float
-  status     OrderStatus @default(PENDING)
-  created_at DateTime    @default(now())
-  updated_at DateTime    @default(now()) @updatedAt
-  deleted_at DateTime?
+  id             Int           @id @default(autoincrement())
+  user_id        Int
+  total_price    Float
+  address        String
+  order_status   OrderStatus   @default(PENDING)
+  payment_method String        @default("cash")
+  payment_status PaymentStatus @default(PENDING)
+  note           String?
+
+  placed    DateTime
+  completed DateTime?
+  cancelled DateTime?
+  delivered DateTime?
 
   User       User        @relation(fields: [user_id], references: [id])
   OrderItems OrderItem[]
+
+  created_at DateTime  @default(now())
+  updated_at DateTime  @default(now()) @updatedAt
+  deleted_at DateTime?
 
   @@map("orders")
 }
 
 model Category {
-  id          Int    @id @default(autoincrement())
-  name        String
-  description String
+  id                 Int     @id @default(autoincrement())
+  name               String
+  description        String?
+  parent_category_id Int?
 
-  Products Product[] @relation("CategoryToProduct")
-  Shops    Shop[]    @relation("CategoryToShop")
+  Products Product[]  @relation("CategoryToProduct")
+  Shops    Shop[]     @relation("CategoryToShop")
+  Parent   Category?  @relation("CategoryToCategory", fields: [parent_category_id], references: [id])
+  Children Category[] @relation("CategoryToCategory")
 
   created_at DateTime  @default(now())
   updated_at DateTime  @default(now()) @updatedAt

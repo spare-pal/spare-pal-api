@@ -20,7 +20,7 @@ export class CreateProductDto {
     example: 'Michelin Tyre for all vehicles.',
   })
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   description: string
 
   @ApiProperty({
