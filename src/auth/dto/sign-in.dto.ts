@@ -4,9 +4,9 @@ import { IsEnum, IsNotEmpty, IsString, Matches } from 'class-validator'
 
 export class SignInDto {
   @ApiProperty({
-    example: 'string',
+    example: '0912121212',
   })
-  @Matches(/(0|\+251)9[0-9]{8}/, {
+  @Matches(/^(0|251|\+251)9\d{8}$/, {
     message: 'Please provide a valid phone number (09XXXXXXXX)',
   })
   @IsString()
@@ -16,6 +16,10 @@ export class SignInDto {
     if (val.startsWith('0')) {
       return `+251${val.slice(1)}`
     }
+    if (val.startsWith('251')) {
+      return `+${val}`
+    }
+    return val
   })
   phone_number: string
 
@@ -27,7 +31,8 @@ export class SignInDto {
   password: string
 
   @ApiProperty({
-    example: 'CUSTOMER',
+    example: 'ADMIN',
+    enum: ['ADMIN', 'CUSTOMER'],
   })
   @IsEnum(['ADMIN', 'CUSTOMER'])
   @IsNotEmpty()

@@ -21,14 +21,15 @@ export class AuthController {
   constructor(private authService: AuthService) {}
 
   @Post('sign-in')
+  @HttpCode(HttpStatus.OK)
   signIn(@Body() body: SignInDto) {
     return this.authService.signIn(body)
   }
 
   @Post('send-code')
   @HttpCode(HttpStatus.OK)
-  async sendCode(@Body() body: SendOtpDto) {
-    return await this.authService.sendOtp(body.phone_number)
+  async sendCode(@Body() { phone_number }: SendOtpDto) {
+    return await this.authService.sendOtp(phone_number)
   }
 
   @Post('sign-up')
