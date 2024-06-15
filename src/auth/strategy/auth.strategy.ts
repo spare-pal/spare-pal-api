@@ -3,7 +3,7 @@ import { ConfigService } from '@nestjs/config'
 import { PassportStrategy } from '@nestjs/passport'
 import { ExtractJwt, Strategy } from 'passport-jwt'
 import PrismaService from '../../prisma/prisma.service'
-import { ErrorCustomException } from '../../utils/exception/error.filter'
+import { CustomException } from '../../utils/exception/error.filter'
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -24,7 +24,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
         where: { email: payload.email },
       })
     } catch (exception) {
-      ErrorCustomException.handle(exception, 'user')
+      CustomException.handle(exception, 'user')
     }
   }
 }

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import PrismaService from '../prisma/prisma.service'
-import { ErrorCustomException } from '../utils/exception/error.filter'
+import { CustomException } from '../utils/exception/error.filter'
 import { CreateBannerDto } from './dto/create-banner.dto'
 import { UpdateBannerDto } from './dto/update-banner.dto'
 
@@ -15,7 +15,7 @@ export class BannerService {
       })
     } catch (error) {
       console.error(error)
-      ErrorCustomException.handle(error, 'banner')
+      CustomException.handle(error, 'banner')
     }
   }
 
@@ -33,7 +33,7 @@ export class BannerService {
       })
     } catch (error) {
       console.error(error)
-      ErrorCustomException.handle(error, 'banner')
+      CustomException.handle(error, 'banner')
     }
   }
 
@@ -47,7 +47,7 @@ export class BannerService {
       })
     } catch (error) {
       console.error(error)
-      ErrorCustomException.handle(error, 'banner')
+      CustomException.handle(error, 'banner')
     }
   }
 
@@ -61,7 +61,7 @@ export class BannerService {
       })
     } catch (error) {
       console.error(error)
-      ErrorCustomException.handle(error, 'banner')
+      CustomException.handle(error, 'banner')
     }
   }
 
@@ -77,7 +77,7 @@ export class BannerService {
       })
     } catch (error) {
       console.error(error)
-      ErrorCustomException.handle(error, 'banner')
+      CustomException.handle(error, 'banner')
     }
   }
 }

@@ -1,7 +1,7 @@
 import { HttpStatus, Injectable } from '@nestjs/common'
 import { ProductStatus, User } from '@prisma/client'
 import PrismaService from '../prisma/prisma.service'
-import { ErrorCustomException } from '../utils/exception/error.filter'
+import { CustomException } from '../utils/exception/error.filter'
 import { paginator } from '../utils/paginator'
 import { QueryDto } from '../utils/query.dto'
 import { CreateOrderDto } from './dto/create-order.dto'
@@ -40,7 +40,7 @@ export class OrderService {
           (product) => product.id === item.product_id,
         )
         if (!product) {
-          throw new ErrorCustomException(
+          throw new CustomException(
             'Product not found',
             HttpStatus.NOT_FOUND,
             'product',
@@ -89,7 +89,7 @@ export class OrderService {
           id: order_id,
         },
       })
-      ErrorCustomException.handle(error, 'order')
+      CustomException.handle(error, 'order')
     }
   }
 
@@ -115,7 +115,7 @@ export class OrderService {
       )
     } catch (error) {
       console.error(error)
-      ErrorCustomException.handle(error, 'order')
+      CustomException.handle(error, 'order')
     }
   }
 
@@ -130,7 +130,7 @@ export class OrderService {
       })
     } catch (error) {
       console.error(error)
-      ErrorCustomException.handle(error, 'order')
+      CustomException.handle(error, 'order')
     }
   }
 
@@ -148,7 +148,7 @@ export class OrderService {
       })
     } catch (error) {
       console.error(error)
-      ErrorCustomException.handle(error, 'order')
+      CustomException.handle(error, 'order')
     }
   }
 
@@ -164,7 +164,7 @@ export class OrderService {
       })
     } catch (error) {
       console.error(error)
-      ErrorCustomException.handle(error, 'order')
+      CustomException.handle(error, 'order')
     }
   }
 }

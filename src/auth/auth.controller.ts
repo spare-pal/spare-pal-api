@@ -1,8 +1,17 @@
-import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common'
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Post,
+  UseGuards,
+} from '@nestjs/common'
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger'
 import { User } from '../utils/decorators/user.decorator'
 import { AuthService } from './auth.service'
 import { CreateUserDto } from './dto/create-user.dto'
+import { SendOtpDto } from './dto/send-otp.dto'
 import { SignInDto } from './dto/sign-in.dto'
 import { AuthGuard } from './guards/auth.guard'
 
@@ -14,6 +23,12 @@ export class AuthController {
   @Post('sign-in')
   signIn(@Body() body: SignInDto) {
     return this.authService.signIn(body)
+  }
+
+  @Post('send-code')
+  @HttpCode(HttpStatus.OK)
+  async sendCode(@Body() body: SendOtpDto) {
+    return await this.authService.sendOtp(body.phone_number)
   }
 
   @Post('sign-up')

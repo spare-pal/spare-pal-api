@@ -6,10 +6,17 @@ export class SignInDto {
   @ApiProperty({
     example: 'string',
   })
-  @Matches(/\+?[1-9]\d{1,14}/)
+  @Matches(/(0|\+251)9[0-9]{8}/, {
+    message: 'Please provide a valid phone number (09XXXXXXXX)',
+  })
   @IsString()
   @IsNotEmpty()
-  @Transform(({ value }) => value?.trim())
+  @Transform(({ value }) => {
+    const val = value.trim()
+    if (val.startsWith('0')) {
+      return `+251${val.slice(1)}`
+    }
+  })
   phone_number: string
 
   @ApiProperty({

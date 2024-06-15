@@ -4,63 +4,90 @@ import {
   ExceptionFilter,
   HttpException,
   HttpStatus,
+  Logger,
 } from '@nestjs/common'
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library'
 
-export class ErrorCustomException extends HttpException {
-  constructor(message: string, statusCode: HttpStatus, property: string = '') {
+export class CustomException extends HttpException {
+  private readonly logger = new Logger(CustomException.name)
+
+  constructor(
+    message: string,
+    statusCode: HttpStatus,
+    detail: string = '',
+    model: string = '',
+  ) {
     super(
       {
         message,
-        property,
+        detail,
+        model,
       },
       statusCode,
     )
   }
 
-  static handle(error: Error, property?: string) {
+  static handle(error: any, detail?: string) {
+    console.error(error)
     if (error instanceof PrismaClientKnownRequestError) {
       switch (error.code) {
         case 'P2025':
         case 'P2016':
-          throw new ErrorCustomException(
-            'NOT_FOUND',
+          throw new CustomException(
+            'Not found',
             HttpStatus.NOT_FOUND,
-            property,
+            detail ?? (error?.meta?.cause as string) ?? '',
+            (error?.meta?.modelName as string) ?? '',
           )
         case 'P2021':
-          throw new ErrorCustomException(
-            'DATABASE_CONNECTION_ERROR',
+          throw new CustomException(
+            'Invalid data',
             HttpStatus.INTERNAL_SERVER_ERROR,
-            property,
+            detail ?? (error?.meta?.cause as string) ?? '',
+            (error?.meta?.modelName as string) ?? '',
           )
         case 'P2002':
-          throw new ErrorCustomException(
-            'EXISTS',
+          throw new CustomException(
+            'Conflict',
             HttpStatus.CONFLICT,
-            property,
+            detail ?? (error?.meta?.cause as string) ?? '',
+            (error?.meta?.modelName as string) ?? '',
           )
         default:
-          throw new ErrorCustomException(error.message, 400, property)
+          console.error(error)
+          throw new CustomException(
+            error.message,
+            HttpStatus.BAD_REQUEST,
+            detail ?? (error?.meta?.cause as string) ?? '',
+            (error?.meta?.modelName as string) ?? '',
+          )
       }
-    } else if (error instanceof ErrorCustomException) {
+    } else if (error instanceof CustomException) {
       throw error
     } else {
-      throw new ErrorCustomException('Something went wrong!', 500, property)
+      throw new CustomException('Something went wrong!', 500, detail)
     }
   }
 }
 
-@Catch(ErrorCustomException)
-export class ErrorExceptionFilter implements ExceptionFilter {
+@Catch(CustomException)
+export class CustomExceptionFilter implements ExceptionFilter {
+  private readonly logger = new Logger(CustomExceptionFilter.name)
+
   catch(exception: HttpException, host: ArgumentsHost) {
-    const response = host.switchToHttp().getResponse<any>()
-    let message = exception.getResponse()['message']
+    const response = host.switchToHttp().getResponse()
+
+    const exceptionResponse = exception.getResponse()
+    const message = exceptionResponse['message'] || 'Something went wrong!'
+    const model = exceptionResponse['model'] || ''
+    const detail = exceptionResponse['detail'] || model
+
+    this.logger.error({ message, detail })
 
     response.status(exception.getStatus()).json({
-      statusCode: exception.getStatus(),
       message,
-      property: exception.getResponse()['property'],
+      detail,
+      statusCode: exception.getStatus(),
     })
   }
 }

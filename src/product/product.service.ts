@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { ProductStatus } from '@prisma/client'
 import PrismaService from '../prisma/prisma.service'
-import { ErrorCustomException } from '../utils/exception/error.filter'
+import { CustomException } from '../utils/exception/error.filter'
 import { paginator } from '../utils/paginator'
 import { QueryDto } from '../utils/query.dto'
 import { CreateProductDto } from './dto/create-product.dto'
@@ -21,7 +21,7 @@ export class ProductService {
       })
     } catch (error) {
       console.error(error)
-      ErrorCustomException.handle(error, 'product')
+      CustomException.handle(error, 'product')
     }
   }
 
@@ -44,7 +44,7 @@ export class ProductService {
       )
     } catch (error) {
       console.error(error)
-      ErrorCustomException.handle(error, 'product')
+      CustomException.handle(error, 'product')
     }
   }
 
@@ -63,7 +63,7 @@ export class ProductService {
       })
     } catch (error) {
       console.error(error)
-      ErrorCustomException.handle(error, 'product')
+      CustomException.handle(error, 'product')
     }
   }
 
@@ -80,7 +80,7 @@ export class ProductService {
       })
     } catch (error) {
       console.error(error)
-      ErrorCustomException.handle(error, 'product')
+      CustomException.handle(error, 'product')
     }
   }
 
@@ -96,7 +96,7 @@ export class ProductService {
       })
     } catch (error) {
       console.error(error)
-      ErrorCustomException.handle(error, 'product')
+      CustomException.handle(error, 'product')
     }
   }
 }
