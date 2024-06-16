@@ -38,12 +38,4 @@ export class CreateUserDto {
   @IsEmail()
   @IsOptional()
   email: string
-
-  @ApiProperty({
-    example: 'Password123',
-  })
-  @Matches(RegExp('^.{3,}$'))
-  @IsString()
-  @IsNotEmpty()
-  password: string
 }

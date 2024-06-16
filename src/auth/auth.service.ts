@@ -24,11 +24,10 @@ export class AuthService {
         data: {
           ...createUserDto,
           username: createUserDto.phone_number,
-          password: await argon.hash(createUserDto.password),
+          password: await argon.hash(`${Math.random() * 10000}`),
         },
       })
-
-      return user
+      return await this.sendOtp(user.phone_number)
     } catch (error) {
       console.error(error)
       CustomException.handle(error, 'user')
